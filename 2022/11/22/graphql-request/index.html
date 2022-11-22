@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+        <title>Graphql-Request 插件使用 | Koi&#39;s Cookbook</title>
+        <meta name="author" content="summerKoi">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <link rel="icon" href="https://s3.uuu.ovh/imgs/2022/11/22/cdefb40d6cfb9261.jpg">
+        <script src="https://cdn.staticfile.org/instant.page/5.1.0/instantpage.min.js" type="module"></script>
+        <script src="https://cdn.staticfile.org/font-awesome/6.2.0/js/all.min.js"></script>
+        
+        <link rel="stylesheet" href="/koisblog/css/fonts.min.css">
+        <link rel="stylesheet" href="/koisblog/css/particlex.css">
+        
+        <script src="https://cdn.staticfile.org/vue/3.2.33/vue.global.prod.min.js"></script>
+    <meta name="generator" content="Hexo 6.3.0"></head>
+    <body>
+        <div id="loading" style="height:100vh;width:100vw;position:fixed;display:flex;z-index:200;justify-content:space-between;background:#fff;transition:opacity 0.3s ease-out"><div style="position:fixed;height:100vh;width:100vw;display:flex;justify-content:center;align-items:center"><div id="loadcontent" style="width:50vmin;height:50vmin;padding:50px;border-radius:50%;display:flex;justify-content:center;align-items:center;border:solid 10px #a3ddfb;text-align:center"><div><h2>LOADING...</h2><p style="word-break:keep-all">加载过慢请开启缓存(浏览器默认开启)</p><div><img alt="loading" src="/koisblog/loading.gif"></div></div></div></div></div>
+        <div id="layout">
+            <i data-fa-symbol="calendar-solid" class="fa-solid fa-calendar fa-fw"></i>
+            <i data-fa-symbol="bookmark-solid" class="fa-solid fa-bookmark fa-fw"></i>
+            <i data-fa-symbol="tags-solid" class="fa-solid fa-tags fa-fw"></i>
+            <transition name="into">
+                <div v-show="show_page" style="display: -not-none">
+                    <div id="menu_show">
+                         
+<nav id="menu">
+    <div class="desktop-menu">
+        <a href="/koisblog/">
+            <span class="title">Koi's Cookbook</span>
+        </a>
+        
+        <a href="/koisblog/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;home</span>
+        </a>
+        
+    </div>
+    <div :class="'phone-menu ' + menu_show" id="phone-menu">
+        <div class="curtain" @click="menu_show = !menu_show" v-show="menu_show"></div>
+        <div :class="'title'" @click="menu_show = !menu_show">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;Koi's Cookbook</span>
+        </div>
+        <transition name="slide">
+        <div class="items" v-show="menu_show">
+            
+            <a href="/koisblog/">
+                <div class="item">
+                    <div style="min-width: 20px; max-width: 50px; width: 10%">
+                        <i class="fa-solid fa-house fa-fw"></i>
+                    </div>
+                    <div style="min-width: 100px; max-width: 150%; width: 20%">home</div>
+                </div>
+            </a>
+            
+        </div>
+        </transition>
+    </div>
+</nav>
+                    </div>
+                    <div id="main">
+                        
+<div class="article">
+    <div>
+        <h1>Graphql-Request 插件使用 </h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <svg class="fa-icon"><use xlink:href="#calendar-solid"></use></svg>
+            </span>
+            2022/11/22
+        </span>
+        
+        
+    </div>
+    <div class="content" v-pre>
+        <p>GraphQL 比传统的 REST API 有不少优越之处，但并不是非常好学，网上的资料不是很好找。</p>
+<p>这篇文章会大致介绍 graphql code generator 中 graphql-request 插件的使用。</p>
+<span id="more"></span>
+
+<h2 id="一个简单的示例"><a href="#一个简单的示例" class="headerlink" title="一个简单的示例"></a>一个简单的示例</h2><p>这个示例以 <a target="_blank" rel="noopener" href="https://swapi-graphql.netlify.app/.netlify/functions/index">Star wars films demo API</a> 为例，使用自动生成的代码来调用该 API</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>插件安装</p>
+<pre><code class="bash">pnpm add -D @graphql-codegen/typescript-graphql-request
+</code></pre>
+<p><code>package.json</code> 文件</p>
+<pre><code class="json">&#123;
+    &quot;dependencies&quot;: &#123;
+        &quot;@types/node&quot;: &quot;^18.11.9&quot;,
+        &quot;graphql&quot;: &quot;^16.6.0&quot;,
+        &quot;graphql-request&quot;: &quot;^5.0.0&quot;,
+        &quot;graphql-tag&quot;: &quot;^2.12.6&quot;,
+        &quot;ts-node&quot;: &quot;^10.9.1&quot;
+    &#125;,
+    &quot;devDependencies&quot;: &#123;
+        &quot;@graphql-codegen/cli&quot;: &quot;^2.13.12&quot;,
+        &quot;@graphql-codegen/typescript&quot;: &quot;^2.8.2&quot;,
+        &quot;@graphql-codegen/typescript-graphql-request&quot;: &quot;^4.5.8&quot;,
+        &quot;@graphql-codegen/typescript-operations&quot;: &quot;^2.5.7&quot;,
+        &quot;typescript&quot;: &quot;^4.9.3&quot;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>新建一个 <code>codegen.ts</code> 作为配置文件</p>
+<pre><code class="typescript">import &#123; CodegenConfig &#125; from &#39;@graphql-codegen/cli&#39;
+ 
+const config: CodegenConfig = &#123;
+  schema: &#39;https://swapi-graphql.netlify.app/.netlify/functions/index&#39;,
+  documents: [&#39;./api/documents/*.graphql&#39;],
+  ignoreNoDocuments: true, // for better experience with the watcher
+  generates: &#123;
+    &#39;./api/requests.ts&#39;: &#123;
+      plugins: [&quot;typescript&quot;, &quot;typescript-operations&quot;, &quot;typescript-graphql-request&quot;]
+    &#125;
+  &#125;
+&#125;
+ 
+export default config
+</code></pre>
+<p>注意两个地方，<code>documents</code> 和 <code>generates</code> ，前一处是 <code>Documents</code> 的路径，这里面应该存有你的 GraphQL 操作，如 query &#x2F; mutation &#x2F; subscription &#x2F; fragment，这些会生成为 SDK 中的方法。后一处是代码生成的路径，标注好插件。</p>
+<p>这里会自动拉取 Star Wars API 的 Schema，自动生成类型代码。</p>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><pre><code class="bash">pnpm graphql-codegen -w --config .\codegen.ts
+</code></pre>
+<h3 id="Document"><a href="#Document" class="headerlink" title="Document"></a>Document</h3><p>如这个 <code>demo.document</code></p>
+<pre><code>query allFilmsWithVariablesQuery($first: Int!) &#123;
+  allFilms(first: $first) &#123;
+    edges &#123;
+      node &#123;
+        ...FilmItem
+      &#125;
+    &#125;
+  &#125;
+&#125;
+
+fragment FilmItem on Film &#123;
+  id
+  title
+  releaseDate
+  producers
+&#125;
+</code></pre>
+<p>最后生成的 SDK 中就会包含 <code>allFilmsWithVariablesQuery</code> 方法，可以直接调用。</p>
+<h3 id="使用-SDK"><a href="#使用-SDK" class="headerlink" title="使用 SDK"></a>使用 SDK</h3><p>在另一个主文件中导入生成代码中的 <code>getSdk</code>，就可以用自动生成的方法来调用 API 接口，TypeScript 会保证接口以正确的类型被使用。</p>
+<pre><code class="typescript">import &#123; GraphQLClient &#125; from &#39;graphql-request&#39;
+import &#123; getSdk &#125; from &#39;./api/requests&#39;
+
+const url:string = &#39;https://swapi-graphql.netlify.app/.netlify/functions/index&#39;
+const testClient = getSdk(new GraphQLClient(url))
+testClient.allFilmsWithVariablesQuery(&#123;first:3&#125;)
+    .then((data) =&gt; &#123;console.log(data.allFilms?.edges?.[0]?.node?.title);&#125;)
+</code></pre>
+<p>返回</p>
+<pre><code class="bash">New Hope
+</code></pre>
+
+    </div>
+    
+    
+</div>
+                         
+<footer id="footer">
+    <div class="footer-wrap">
+        <div>
+            © 2022 - 2022 Koi&#39;s Cookbook
+            <span class="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            @summerKoi
+        </div>
+        <div></div>
+        <div>Based on the <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo Engine</a> & <a
+                target="_blank" rel="noopener" href="https://github.com/argvchs/hexo-theme-particlex">ParticleX Theme</a></div>
+        
+    </div>
+</footer>
+                    </div>
+                </div>
+            </transition>
+            <div id="img_show">
+                <img id="img_content" alt="img_show">
+            </div>
+        </div>
+        <script src="https://cdn.staticfile.org/highlight.js/11.5.1/highlight.min.js"></script>
+        <script src="/koisblog/js/particlex.js"></script>
+        <script src="/koisblog/js/showimg.js"></script>
+        
+
+    </body>
+</html>
